@@ -42,6 +42,27 @@ ___
     └── www
         └── fish
 ```
+___
+
+#### Local Installation & Usage
+
+1. **Clone the GitHub repository:**
+   ```bash
+   git clone https://github.com
+   cd Goeler-Slough_Final_Project
+   ```
+
+2. **Install packages:**
+   ```r
+   install.packages(c("shiny", "tidyverse", "shinyWidgets", "bslib", "plotly", "leaflet"))
+   ```
+
+3. **Run the app:**
+   ```r
+   shiny::runApp()
+   ```
+
+___
 
 #### Contact:
 Natalie Goeler-Slough: nsgs@hawaii.edu  
