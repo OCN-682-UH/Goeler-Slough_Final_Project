@@ -1,0 +1,30 @@
+Field Data,
+Date,Date video was taken; in YYYY-MM-DD
+Site,Site name (e.g. Hanauma.Bay)
+Location ,Sub-location within site (e.g. outside Witches Brew)
+GoPro,GoPro ID letter
+Depth,Depth of GoPro deployment (in ft)
+Vid_start_time,"Time when video started recording (time of day, hh:mm)"
+Vid_end_time,"Time when video stopped recording / was stopped (time of day, hh:mm)"
+Video_duration,Total duration of video recording (hour:min:sec)
+Analyzeable_duration,Total duration of analyzeable video – subtracting 5 minutes at start + end for diver presence & any issues w/ cameras
+Water_temp,Average water temperature that day (in °F)
+Latitude,Latitude (ºN) of that GoPro frame (or estimate at set of frames if individual GPS points not captured)
+Longitude,Longitude (ºW) of that GoPro frame (or estimate at set of frames if individual GPS points not captured)
+Divers,Divers who collected field data
+Notes,Any notes; including any issues with videos / camera deployment
+,
+Raw Data,
+Video_date,Date video was taken; in YYYY-MM-DD
+Site,Site name (e.g. Hanauma.Bay)
+GoPro,GoPro ID letter
+Analyzer,Video analyzer's initials
+Date_analyzed,Date of analysis
+Video_filename,Full filename of video
+Start_time,Time (mins:seconds) into video when you started recording bites 
+Bite_time,Time of individual bite (mins:seconds)
+Bite_number,Number bite of that individual fish
+Fish_number,"Number of fish, per video"
+Fish_family,Scientific family of that specific fish
+Fish_ID,Scientific name of the individual fish (in G. species format)
+Notes,"Any analysis notes; i.e. questions about an ID, uncertainty, etc. – please also highlight rows w/ questions to return to"

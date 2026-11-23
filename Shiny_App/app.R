@@ -16,9 +16,9 @@ library(leaflet)
 
 
 ### LOADING DATA:
-coralnet <- read_csv("Data/annotations.csv") #CoralNet benthic analysis, point annotations
-labelset <- read_csv("Data/CoralNet_Labelset.csv") #CoralNet labelset with subcategory + broad categories assigned
-herbivory <- read_csv("Data/Herbivory_Data_FinalProj.csv") #Data from herbivory videos, containing bite rates with paired fish ID, joined with field data
+coralnet <- read_csv("data/annotations.csv") #CoralNet benthic analysis, point annotations
+labelset <- read_csv("data/CoralNet_Labelset.csv") #CoralNet labelset with subcategory + broad categories assigned
+herbivory <- read_csv("data/Herbivory_Data_FinalProj.csv") #Data from herbivory videos, containing bite rates with paired fish ID, joined with field data
 
 
 
