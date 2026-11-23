@@ -72,7 +72,7 @@ site_stats <- benthic_clean |>
   group_by(Site, Date, Name) |>
   summarise(
     total_points = n(),
-    grazeable_points = sum(Subcategory %in% c("Turf", "CCA", "Macroalgae"), na.rm = TRUE), #number of coral points per quadrat
+    grazeable_points = sum(Subcategory %in% c("Turf", "CCA", "Macroalgae"), na.rm = TRUE), #number of grazeable points per quadrat
     coral_points = sum(Subcategory == "Coral", na.rm = TRUE), #number of coral points per quadrat
     .groups = "drop"
   ) |>
@@ -92,7 +92,7 @@ quad_grazeable <- benthic_clean |>
   group_by(Site, Date, Name, GoPro.ID) |>
   summarise(
     total_points = n(),
-    grazeable_points = sum(Subcategory %in% c("Turf", "CCA", "Macroalgae"), na.rm = TRUE), #number of coral points per quadrat
+    grazeable_points = sum(Subcategory %in% c("Turf", "CCA", "Macroalgae"), na.rm = TRUE), #number of grazeable points per quadrat
     .groups = "drop"
   ) |>
   mutate(
@@ -126,10 +126,10 @@ sites_map <- sites |>
 #Making table of the "top biters" -- fish with the highest bite numbers
 top_biters <- herbivory |>
   filter(!is.na(Fish_ID)) |>
-  count(Fish_family, Fish_ID, name = "bites", sort = TRUE) |>
+  count(Fish_family, Fish_ID, name = "bites", sort = TRUE) |> #count of total bites per fish ID, arranged in order
   slice_head(n = 6) |>  #showing top 6 species
   mutate(across(where(is.character), ~ str_replace(.x, "Scaridae", "Labridae"))) |> #fixing old family name Scaridae to be aligned with new Labridae designation
-  mutate(photo = paste0(str_replace_all(Fish_ID, "[^A-Za-z]+", "_"), ".jpg"), #adding column for photo name for these top fish
+  mutate(photo = paste0(str_replace_all(Fish_ID, "[^A-Za-z]+", "_"), ".jpg"), #adding a column for corresponding photo name for these top fish (to add photos later)
          Fish_ID = factor(Fish_ID, levels = rev(Fish_ID)))   #setting factor to keep the top biter at the top of the plot
 
 
@@ -137,7 +137,7 @@ top_biters <- herbivory |>
 
 ui <- navbarPage(
   title = "Benthic Herbivory Project", #title of entire app
-  theme = bs_theme(bootswatch = "lux"), #using my go-to theme lux again
+  theme = bs_theme(bootswatch = "lux"), #using the theme lux 
   # PAGE 1 = map of study sites
   tabPanel(
     "Bite Rates on O‘ahu",
@@ -181,33 +181,34 @@ ui <- navbarPage(
       ),
       mainPanel( 
         width = 9,
-        p("Explore benthic composition across O‘ahu: pick sites and dates on the left, switch between
-     individual quadrats and site/date summary, and view the results below as a plot or a table."),
+        p("Explore benthic composition across O‘ahu: pick sites and dates on the left, switch between individual quadrats and site/date summary, and view the results below as a plot or a table."),
         tabsetPanel( #separate tabs for plot or table output
           type = "pills", #making the tables "pills" style (more like a button)
-          tabPanel("Plot", #one tab for the plot
+          tabPanel("Plot", #one tab for the plot output
                    h3(textOutput("plot_title")),
                    uiOutput("bar_ui")),
-          tabPanel("Table", #one tab for the table
+          tabPanel("Table", #one tab for the table output
                    h4(textOutput("table_title")),
                    tableOutput("table"))
         )
       )
     )
   ),
+  # PAGE 3 = top biters (species w/ most bites)
   tabPanel(
     "Top Biters",
     h3("Fish species with the most bites"),
     fluidRow(
       column(6, plotOutput("top_plot", height = "450px")),
-      #adding photos of top 6 biting species for users that don't know scientific names
+      #adding photos of top 6 biting species, nice for users that don't know scientific names
       column(6,
              fluidRow(lapply(seq_len(nrow(top_biters)), function(i) {
                column(4,
-                      img(src = file.path("fish", top_biters$photo[i]), width = "100%"),
+                      img(src = file.path("fish", top_biters$photo[i]), width = "100%"), #taking images from fish folder, with matching photo filenames as set earlier
                       p(em(as.character(top_biters$Fish_ID[i])), br(), top_biters$bites[i], "bites")
                )
              })),
+             #adding credits for all the Creative Commons photos used in this project
              p("Photo credits: Rickard Zerpe, A. nigrofuscus & A. olivaceus; Steve Mohundro, T. duperrey; Diego Delso, S. psittacus; Don Loarie, S. balteata; Chris Sulots, A. nigroris")
       )
     )
@@ -277,19 +278,20 @@ server <- function(input,output){
     plot <- if (input$view == "quadrat") { #if selected per quadrat
       ggplot(quadrat_cover(),
              aes(x = GoPro.ID, y = Percent.cover, fill = Subcategory,
-                 text = paste0(Subcategory, ": ", round(Percent.cover, 1), "%"))) +
+                 text = paste0(Subcategory, ": ", round(Percent.cover, 1), "%"))) + #adding text element so that percent cover of each subcategory pops up when user mouses over barplot
         geom_col() +
         scale_fill_manual(values = benthic_pal, drop = FALSE) +
-        facet_wrap(~ Site + Date, ncol = 2, scales = "free_x") +
+        facet_wrap(~ Site + Date, ncol = 2, scales = "free_x") + #facet wrapping by site/date
         labs(x = "Quadrat", y = "Percent Cover (%)",
              fill = "Benthic Category")
     } else {  #if selected summary option
       ggplot(summary_cover(),
              aes(x = factor(Date), y = Mean.cover, fill = Subcategory,
-                 text = paste0(Subcategory, ": ", round(Mean.cover, 1), "%"))) +
+                 text = paste0(Subcategory, ": ", round(Mean.cover, 1), "%"))) + #adding text element so that percent cover of each subcategory pops up when user mouses over barplot
+        geom_col() +
         geom_col() +
         scale_fill_manual(values = benthic_pal, drop = FALSE) +
-        facet_wrap(~ Site, ncol = 2, scales = "free_x") +
+        facet_wrap(~ Site, ncol = 2, scales = "free_x") + #facet wrapping by site/date
         labs(x = "Survey Date", y = "Mean Percent Cover (%)",
              fill = "Benthic Category")
     } 
@@ -308,6 +310,7 @@ server <- function(input,output){
     ggplotly(plot, tooltip = "text", height = plot_height()) |> #rendering plotly, plot height by # of plots as set above
       layout(margin = list(b = 140, t = 60)) #adding margin for padding so that text isn't cut off
   })
+  #table output (another option in addition to barplot)
   output$table <- renderTable({
     if (input$view == "quadrat") {
       quadrat_cover() |> #taking quadrat cover values from calculations above
@@ -338,7 +341,7 @@ server <- function(input,output){
         fillColor = "#0096C7", fillOpacity = 0.9
       )
   })
-  #adding simple plot of top biters (fish species with most bites)
+  #adding simple plot of top biters (fish species with most bites) on "top biters" page
   output$top_plot <- renderPlot({
     ggplot(top_biters, aes(x = bites, y = Fish_ID, fill = Fish_family)) +
       geom_col() +
