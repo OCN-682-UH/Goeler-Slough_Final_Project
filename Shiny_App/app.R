@@ -146,9 +146,10 @@ ui <- navbarPage(
       column(3,
              h3("Project overview"), #adding a column for my project overview
              p("On coral reefs, herbivorous fish are the first line of defense preventing macroalgae from smothering coral. This project uses underwater video and benthic surveys to measure how much fish grazing is happening at sites on Oʻahu, and what the reef surface looks like beneath it. Explore fish grazing rates, benthic composition, and the fish species taking the most bites."),
-             p("Methods: GoPro videos were used to count bite rates by fish within 1m², where focal benthic quadrats were analyzed and annotated in CoralNet."),
-             p("Map (right): Circle size shows the bite rate (standardized by proportion of grazeable substrate) at each site. Click a site to see its
-         bite rate, grazeable substrate, and coral cover.")
+             h5("Methods:"), #heading for brief methods section
+             p("GoPro videos were used to count bite rates by fish within 1m², where focal benthic quadrats were analyzed and annotated in CoralNet."),
+             h5("Map (shown right):"), #heading for map description
+             p("Circle size shows the bite rate (standardized by proportion of grazeable substrate) at each site. Click a site to see its bite rate, grazeable substrate, and coral cover.")
       ),
       column(9, leafletOutput("map", height = "80vh"))
     )
